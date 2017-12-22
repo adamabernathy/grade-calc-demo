@@ -9,6 +9,14 @@
         label {
             margin-right: 1em;
         }
+
+        .red {
+            color: red;
+        }
+
+        .green {
+            color: green;
+        }
     </style>
 </head>
 
@@ -22,7 +30,13 @@
         const URLParameters = tokenizeURLArgs(window.location.search);
 
         // Grade cutoff scores and exam weight.
-        const grades = { A: 90, B: 80, C: 70 };
+        const grades = {
+            A: 90, A_minus: 88,
+            B_plus: 87, B: 80, B_minus: 79,
+            C_plus: 78, C: 70, C_minus: 71,
+            D_plus: 68, D: 60, D_minus: 61,
+            FAIL: 59
+        };
         const examWeight = URLParameters.examweight || 15;  // will be converted to decimal later
 
         // HTML nodes for input and output
@@ -56,14 +70,13 @@
          * @returns {string}
          */
         const generateText = (letterGrade, score) => {
-            const message = score > 200
-                ? 'Just quit school.'
-                : score > 100
-                    ? 'You ain\'t gonna make it!'
-                    : score < 0
-                        ? 'Stay at home.'
-                        : '';
-            return isFinite(score) ? `<li>${letterGrade} : ${score.toFixed(2)} % ${message}</li>` : null;
+            const colorsClasses = { red: 'red', green: 'green' }
+
+            const canPass = score < 100;
+            const message = !canPass ? 'Not Possiable' : '';  // Could just put this below
+            return isFinite(score)
+                ? `<li class="${canPass ? colorsClasses.green : colorsClasses.red}"> ${letterGrade} : ${score.toFixed(2)} % ${message}</li>`
+                : null;
         }
 
         // Listen on the $currentGrade input box for changes.
@@ -72,9 +85,9 @@
             // to calculate the score needed on the final to get that grade.
             const currentGrade = parseFloat($currentGrade.value);
             $gradeResults.innerHTML =
-                `<p>Final grade vs grade on final:</p><ul>${
-                Object.keys(grades).map(k => {
-                    return generateText(k, whatToScoreOnTheFinal(currentGrade, grades[k], examWeight));
+                `<p>Final grade vs grade on final:</p>
+                <ul>${Object.keys(grades).map(k => {
+                    return generateText(k.replace('_minus', '-').replace('_plus', '+'), whatToScoreOnTheFinal(currentGrade, grades[k], examWeight));
                 }).join('')
                 }</ul>`;
         };
