@@ -74,7 +74,9 @@
             const canPass = score < 100;
             const message = !canPass ? 'Not Possiable' : '';  // Could just put this below
             return isFinite(score)
-                ? `<li class="${canPass ? colorsClasses.green : colorsClasses.red}"> ${letterGrade} : ${score.toFixed(2)} % ${message}</li>`
+                ? `<li class="${canPass ? colorsClasses.green : colorsClasses.red}">
+                    ${letterGrade} : ${score.toFixed(2)} % ${message}
+                   </li>`
                 : null;
         }
 
@@ -86,7 +88,10 @@
             $gradeResults.innerHTML =
                 `<p>Final grade vs grade on final:</p>
                 <ul>${Object.keys(grades).map(k => {
-                    return generateText(k.replace('_minus', '-').replace('_plus', '+'), whatToScoreOnTheFinal(currentGrade, grades[k], examWeight));
+                    return generateText(
+                        k.replace('_minus', '-').replace('_plus', '+'),
+                        whatToScoreOnTheFinal(currentGrade, grades[k], examWeight)
+                    );
                 }).join('')
                 }</ul>`;
         };
