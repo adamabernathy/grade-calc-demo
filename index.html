@@ -21,15 +21,24 @@
         // Deal with URL args
         const URLParameters = tokenizeURLArgs(window.location.search);
 
+        // Grade cutoff scores and exam weight.
         const grades = { A: 90, B: 80, C: 70 };
         const examWeight = URLParameters.examweight || 15;  // will be converted to decimal later
 
+        // HTML nodes for input and output
         const $currentGrade = document.getElementById("current-grade-input");
         const $gradeResults = document.getElementById("grade-results");
 
-        // You can use either function type here (declared or arrow), but since we
-        // don't need to bind any data, and this thing is stateless, we can do it this way.
-        // function whatToScoreOnTheFinal (currentGrade, desiredGrade, examWeight) {
+
+        /**
+         * Calculate what score is needed on the final to achieve a desired grade.
+         * 
+         * @param {number} currentGrade, student's current grade
+         * @param {number} desiredGrade, grade the student wants
+         * @param {number} examWeight, exam weight.
+         * 
+         * @returns {number}, grade needed on the final to get the grade you want
+         */
         const whatToScoreOnTheFinal = (currentGrade, desiredGrade, examWeight) => {
             return (desiredGrade - (currentGrade * (1 - (examWeight / 100)))) / (examWeight / 100)
         }
@@ -37,6 +46,15 @@
         // console.log('verification test (96.18)', whatToScoreOnTheFinal (87.94, 90, 25))
         // console.assert(whatToScoreOnTheFinal (87.94, 90, 25) == 96.18)
 
+        /**
+         * Returns a witty message about the student's grade potential.
+         * 
+         * Handles the null/NaN cases.
+         * 
+         * @param {string} letterGrade
+         * @param {number} score
+         * @returns {string}
+         */
         const generateText = (letterGrade, score) => {
             const message = score > 200
                 ? 'Just quit school.'
@@ -48,7 +66,10 @@
             return isFinite(score) ? `<li>${letterGrade} : ${score.toFixed(2)} % ${message}</li>` : null;
         }
 
+        // Listen on the $currentGrade input box for changes.
         $currentGrade.oninput = () => {
+            // First convert input to float then itterate over the grade cutoff scores
+            // to calculate the score needed on the final to get that grade.
             const currentGrade = parseFloat($currentGrade.value);
             $gradeResults.innerHTML =
                 `<p>Final grade vs grade on final:</p><ul>${
@@ -58,7 +79,12 @@
                 }</ul>`;
         };
 
-
+        /**
+         * Returns an object with the window arguments
+         * 
+         * @param {string} url 
+         * @returns {object}
+         */
         function tokenizeURLArgs(url) {
             let result = {};
             let _url = url.replace('/', '').replace('?', '').replace('%20', ' ');
