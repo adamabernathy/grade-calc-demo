@@ -1,0 +1,63 @@
+<html>
+
+<head>
+    <style>
+        ul {
+            list-style: none;
+        }
+
+        label {
+            margin-right: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>What grade do I need on the final to not be grounded?</h1>
+    <label>My current grade</label>
+    <input id="current-grade-input" type="number" max="100" step="0.1"></input>
+    <div id="grade-results"></div>
+    <script>
+        const grades = { A: 90, B: 80, C: 70 };
+        const examWeight = 15;  // will be converted to decimal later
+
+        const $currentGrade = document.getElementById("current-grade-input");
+        const $gradeResults = document.getElementById("grade-results");
+
+        // You can use either function type here (declared or arrow), but since we
+        // don't need to bind any data, and this thing is stateless, we can do it this way.
+        // function whatToScoreOnTheFinal (currentGrade, desiredGrade, examWeight) {
+        const whatToScoreOnTheFinal = (currentGrade, desiredGrade, examWeight) => {
+            return (desiredGrade - (currentGrade * (1 - (examWeight / 100)))) / (examWeight / 100)
+        }
+
+        // console.log('verification test (96.18)', whatToScoreOnTheFinal (87.94, 90, 25))
+        // console.assert(whatToScoreOnTheFinal (87.94, 90, 25) == 96.18)
+
+        const generateText = (letterGrade, score) => {
+            const message = score > 200
+                ? 'Just quit school.'
+                : score > 100
+                    ? 'You ain\'t gonna make it!'
+                    : score < 0
+                        ? 'Stay at home.'
+                        : '';
+            return isFinite(score) ? `<li>${letterGrade} : ${score.toFixed(2)} % ${message}</li>` : null;
+        }
+
+        $currentGrade.oninput = () => {
+            const currentGrade = parseFloat($currentGrade.value);
+            $gradeResults.innerHTML =
+                `<p>Final grade vs grade on final:</p><ul>${
+                Object.keys(grades).map(k => {
+                    return generateText(k, whatToScoreOnTheFinal(currentGrade, grades[k], examWeight));
+                }).join('')
+                }</ul>`;
+        };
+
+
+    </script>
+
+</body>
+
+</html>
