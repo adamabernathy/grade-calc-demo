@@ -70,8 +70,7 @@
          * @returns {string}
          */
         const generateText = (letterGrade, score) => {
-            const colorsClasses = { red: 'red', green: 'green' }
-
+            const colorsClasses = { red: 'red', green: 'green' };
             const canPass = score < 100;
             const message = !canPass ? 'Not Possiable' : '';  // Could just put this below
             return isFinite(score)
